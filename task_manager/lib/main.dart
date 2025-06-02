@@ -37,6 +37,44 @@ class _TaskManagerScreenState extends State<TaskManagerScreen> {
     }
   }
 
+  void _deleteTask(int index) {
+    setState(() {
+      _tasks.removeAt(index);
+    });
+  }
+
+  void _editTask(int index) async {
+    final editedTask = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        final editController = TextEditingController(text: _tasks[index]);
+        return AlertDialog(
+          title: const Text('Edit Task'),
+          content: TextField(
+            controller: editController,
+            decoration: const InputDecoration(border: OutlineInputBorder()),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, editController.text),
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (editedTask != null && editedTask.isNotEmpty) {
+      setState(() {
+        _tasks[index] = editedTask;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
